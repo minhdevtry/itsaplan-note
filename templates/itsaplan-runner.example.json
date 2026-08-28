@@ -1,0 +1,25 @@
+{
+  "url": "http://localhost:3002",
+  "agent": "antigravity",
+  "concurrency": 3,
+  "pollIntervalMs": 3000,
+  "cwd": "/home/minhdn3/Documents/test-chat",
+  "agents": [
+    {
+      "name": "Triage Bot",
+      "apiKey": "itp_VhyzYjSbFwGKqJESDyobJKwzOzqEksObRsXyyNtUiHVbyOkWalrwLzPfrONXYgXH"
+    },
+    {
+      "name": "Dev Bot",
+      "apiKey": "itp_akQnQRuYmreUTnYwvxWGEhPOnTooRQHLQwuiqdCcPYFKbgOOvMzWbFIGvmqHJixf"
+    },
+    {
+      "name": "Review Bot",
+      "apiKey": "itp_FcpyhqcVVXhQeolkcEPBVpPanAzDvJNRLLomZlHFIeOQhBSAruPLtMkHxFamImrV"
+    },
+    {
+      "name": "Planner Bot",
+      "apiKey": "itp_UqjnlgeUJJkwhLSKGRzKmbwjLbvbCrEyaNWXPoysLcvhIrTiEQGoaZgWmcDgKAum"
+    }
+  ]
+}

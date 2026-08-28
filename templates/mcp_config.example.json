@@ -1,0 +1,44 @@
+{
+  "mcpServers": {
+    "itsaplan": {
+      "serverUrl": "http://localhost:3002/mcp",
+      "headers": {
+        "Authorization": "Bearer itp_VhyzYjSbFwGKqJESDyobJKwzOzqEksObRsXyyNtUiHVbyOkWalrwLzPfrONXYgXH"
+      }
+    },
+    "chrome-devtools-mcp": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "chrome-devtools-mcp@latest"
+      ]
+    },
+    "huly": {
+      "command": "/home/minhdn3/.nvm/versions/node/v22.23.2/bin/node",
+      "args": [
+        "/home/minhdn3/Documents/Code/Minh/VHCode/tms/huly-mcp/dist/index.cjs"
+      ],
+      "env": {
+        "HULY_URL": "http://192.168.8.85:8087",
+        "HULY_WORKSPACE": "vuihoc",
+        "HULY_EMAIL": "bot-ticket-intake@vuihoc.vn",
+        "HULY_PASSWORD": "12345678",
+        "HULY_TOOL_MODE": "native"
+      }
+    },
+    "searxng": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-searxng"
+      ],
+      "env": {
+        "SEARXNG_URL": "https://search.2tocom.space",
+        "AUTH_USERNAME": "agent",
+        "AUTH_PASSWORD": "5905811dca791e6a659f7b795b0a821d07ab4236efe4b2d00f8e72de4a761cf8",
+        "SEARXNG_DEFAULT_LANGUAGE": "en",
+        "SEARXNG_TIMEOUT": "30"
+      }
+    }
+  }
+}
