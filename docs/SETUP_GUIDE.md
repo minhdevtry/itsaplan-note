@@ -1,20 +1,44 @@
 # Hướng Dẫn Thiết Lập Hệ Thống Từ A Đến Z (Setup Guide)
 
-Tài liệu này hướng dẫn chi tiết từng bước để cài đặt và kích hoạt hệ thống **It's a Plan + Antigravity Multi-Agent Runner** trên một máy tính mới từ đầu.
+Tài liệu này hướng dẫn chi tiết từng bước để cài đặt và kích hoạt hệ thống **It's a Plan + Antigravity Multi-Agent Runner** trên một máy tính mới hoặc kết nối tới một máy chủ It's a Plan khác.
 
 ---
 
-## 🛠️ Bước 1: Khởi Chạy Máy Chủ It's a Plan (Docker Compose)
+## 🚀 Cách 1: Tự Động Hóa 100% (Khuyên dùng cho AI Agent / Dev)
 
-1. Clone repo mã nguồn:
+Nếu bạn vừa clone repository này sang máy mới:
+
+```bash
+# 1. Cài đặt toàn bộ Rules & Skills vào cấu hình máy trạm
+./scripts/install-agent-environment.sh
+
+# 2. Khởi tạo 4 Nhãn + 4 AI Bots trên máy chủ It's a Plan (tự động xuất itsaplan-runner.json)
+# Thay đổi URL và PROJECT_KEY tùy theo server của bạn:
+bun scripts/bootstrap-team.ts \
+  --url http://localhost:3002 \
+  --project TP \
+  --cwd /path/to/source-code-repo
+
+# 3. Khởi chạy tiến trình Runner ngầm
+itsaplan-runner > ~/.itsaplan-runner.log 2>&1 &
+```
+
+---
+
+## 🛠️ Cách 2: Thiết Lập Thủ Công Từng Bước (Manual Step-by-Step)
+
+### Bước 1: Khởi Chạy Máy Chủ It's a Plan (Docker Compose)
+
+*(Bỏ qua bước này nếu bạn đang kết nối tới một máy chủ It's a Plan có sẵn trên mạng nội bộ / cloud)*
+
+1. Clone repo mã nguồn It's a Plan:
    ```bash
    git clone https://github.com/croffasia/itsaplan.git
    cd itsaplan
    ```
 
-2. Tạo file `.env` (lưu ý đổi port nếu port 3000 bị trùng):
+2. Tạo file `.env`:
    ```bash
-   # Tạo các secret 32-byte
    BETTER_AUTH_SECRET=$(openssl rand -base64 32)
    APP_ENCRYPTION_KEY=$(openssl rand -hex 32)
    WORKER_INTERNAL_TOKEN=$(openssl rand -hex 32)
@@ -44,36 +68,33 @@ Tài liệu này hướng dẫn chi tiết từng bước để cài đặt và 
    * Web UI: [http://localhost:3001](http://localhost:3001)
    * API Backend: [http://localhost:3002](http://localhost:3002)
 
-4. Mở trình duyệt [http://localhost:3001](http://localhost:3001), đăng ký tài khoản đầu tiên (tự động nhận quyền `god`/owner), và tạo một dự án (ví dụ mã dự án `TP` - Test Project). Bật tính năng **MCP Server** trong Project Settings.
+4. Mở trình duyệt [http://localhost:3001](http://localhost:3001), đăng ký tài khoản đầu tiên (tự động nhận quyền `god`/owner), tạo một dự án (ví dụ mã `TP` - Test Project) và bật tính năng **MCP Server** trong Project Settings.
 
 ---
 
-## 🤖 Bước 2: Tạo 4 AI Agents Trên Hệ Thống
+### Bước 2: Tạo 4 Nhãn Phân Luồng (Triage Labels)
 
-Chạy lệnh hoặc script để tạo 4 AI Bot vào bảng `ai_agent` của dự án (`projectId: 1`):
-1. **`triage-bot`** (Triage Bot)
-2. **`planner-bot`** (Planner Bot)
-3. **`dev-bot`** (Dev Bot)
-4. **`review-bot`** (Review Bot)
-
-Lưu lại 4 mã API Key (`itp_...`) được cấp cho 4 Bot.
+Vào Web UI (**Project Settings $\rightarrow$ Labels**) hoặc chạy tool MCP `create_label` để tạo 4 nhãn:
+* `needs-triage` (Màu: `#3b82f6`)
+* `needs-info` (Màu: `#f97316`)
+* `ready-for-agent` (Màu: `#8b5cf6`)
+* `ready-for-human` (Màu: `#22c55e`)
 
 ---
 
-## 🏷️ Bước 3: Khởi Tạo 4 Nhãn Triage Trên Dự Án
+### Bước 3: Tạo 4 AI Agents Trên Hệ Thống
 
-Thêm 4 nhãn cần thiết vào bảng `label` của dự án:
-```sql
-INSERT INTO label (project_id, name, color) VALUES 
-(1, 'needs-triage', '#3b82f6'),
-(1, 'needs-info', '#f97316'),
-(1, 'ready-for-agent', '#8b5cf6'),
-(1, 'ready-for-human', '#22c55e');
-```
+Vào Web UI (**Project Settings $\rightarrow$ AI Agents**) hoặc chạy `bun scripts/bootstrap-team.ts` để tạo 4 bot:
+1. **`triage-bot`** (Triage Bot, `kind: external`, `runnerScope: project`)
+2. **`planner-bot`** (Planner Bot, `kind: external`, `runnerScope: project`)
+3. **`dev-bot`** (Dev Bot, `kind: external`, `runnerScope: project`)
+4. **`review-bot`** (Review Bot, `kind: external`, `runnerScope: project`)
+
+*(Lưu lại 4 API Keys `itp_...` vừa tạo để điền vào file Runner)*
 
 ---
 
-## 🚀 Bước 4: Cài Đặt & Cấu Hình Runner (`itsaplan-runner`)
+### Bước 4: Cài Đặt & Cấu Hình Runner (`itsaplan-runner`)
 
 1. Build gói runner từ mã nguồn:
    ```bash
@@ -84,7 +105,7 @@ INSERT INTO label (project_id, name, color) VALUES
    chmod +x ~/.local/bin/itsaplan-runner
    ```
 
-2. Tạo file `itsaplan-runner.json` tại thư mục làm việc (điền 4 API Key của 4 bot):
+2. Tạo file `itsaplan-runner.json` tại thư mục làm việc của repo code:
    ```json
    {
      "url": "http://localhost:3002",
@@ -117,14 +138,14 @@ INSERT INTO label (project_id, name, color) VALUES
 
 ---
 
-## 📜 Bước 5: Cài Đặt Bộ Rule & Skills Global
+### Bước 5: Cài Đặt Bộ Rule & Skills Global
 
-1. Tạo file Rule Global tại `~/.gemini/config/rules/itsaplan.md` (xem nội dung trong `CONFIG_REFERENCE.md`).
-2. Đồng bộ thư mục skills vào `~/.gemini/config/skills/` (gồm `triage`, `to-tickets`, `tdd`, `code-review`, `diagnosing-bugs`...).
+1. Sao chép `rules/itsaplan.md` vào `~/.gemini/config/rules/itsaplan.md`.
+2. Sao chép toàn bộ thư mục `skills/` vào `~/.gemini/config/skills/`.
 
 ---
 
-## ⚡ Bước 6: Khởi Chạy Runner Ngầm (Daemon)
+### Bước 6: Khởi Chạy Runner Ngầm (Daemon)
 
 Chạy tiến trình runner ngầm:
 ```bash
@@ -135,4 +156,16 @@ Kiểm tra trên trang **[http://localhost:3001/project/TP/ai-agents](http://loc
 
 ---
 
-🎉 **Hệ thống đã sẵn sàng 100% để tự động nhận việc, phân rã, lập trình TDD và thẩm định chất lượng!**
+## 🌐 Thiết Lập Kết Nối Đến Server Khác / Remote Server
+
+Khi bạn chuyển sang làm việc với một server It's a Plan khác (ví dụ `https://plan.company.internal`):
+1. Lấy mã dự án (`projectKey`) và Token xác thực trên server đó.
+2. Chạy lệnh:
+   ```bash
+   bun scripts/bootstrap-team.ts \
+     --url https://plan.company.internal \
+     --project PROJ \
+     --token <YOUR_TOKEN> \
+     --cwd /path/to/project-repo
+   ```
+3. Khởi động lại `itsaplan-runner`.
