@@ -1,0 +1,49 @@
+# Environment files
+.env
+.env.*
+!.env.example
+*.local
+
+# Node.js dependencies & builds
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+dist/
+build/
+.next/
+out/
+
+# Python caches & virtual environments
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+.venv/
+
+# Operating System files
+.DS_Store
+Thumbs.db
+ehthumbs.db
+
+# IDE & Editor configs
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Logs and runtime artifacts
+logs/
+*.log
+*.pid
+*.seed
+*.pid.lock
+
+# Test & coverage outputs
+coverage/
+.nyc_output/
